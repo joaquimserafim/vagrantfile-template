@@ -47,7 +47,7 @@ Vagrant.configure("2") do |config|
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
   # update the OS
-  config.vm.provision "shell", path: "https://raw.githubusercontent.com/joaquimserafim/vagrant-provision/master/cli.sh", args: "update_os"
+  config.vm.provision "shell", path: "https://raw.githubusercontent.com/joaquimserafim/vagrant-provision/master/provision.sh", args: "update_os"
 
   # need the 'provision_reboot' file for this
   # now we need to reboot in the middle of the provision
@@ -58,5 +58,5 @@ Vagrant.configure("2") do |config|
   end
 
   # THE SOFTWARE TO BE INSTALL COME HERE
-  # config.vm.provision "shell", path: "https://raw.githubusercontent.com/joaquimserafim/vagrant-provision/master/cli.sh", args: ""
+  # config.vm.provision "shell", path: "https://raw.githubusercontent.com/joaquimserafim/vagrant-provision/master/provision.sh", args: ""
 end
