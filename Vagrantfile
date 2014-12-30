@@ -42,10 +42,10 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  # PROVISION
-  # enable shell provision
+  # The shell to use when executing SSH commands from Vagrant
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-
+  
+  # PROVISION
   # update the OS
   config.vm.provision "shell", path: "https://raw.githubusercontent.com/joaquimserafim/vagrant-provision/master/provision.sh", args: "update_os"
 
