@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
   # Example for VirtualBox:
   #
   config.vm.provider :virtualbox do |vb|
-    vb.name = "vagrant-template"
+    vb.name = "vagrant-template_" + SecureRandom.uuid
     vb.customize [
       "modifyvm", :id,
       "--memory", "512"
