@@ -44,7 +44,7 @@ Vagrant.configure("2") do |config|
 
   # The shell to use when executing SSH commands from Vagrant
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-  
+
   # PROVISION
   # update the OS
   config.vm.provision "shell", path: "https://raw.githubusercontent.com/joaquimserafim/vagrant-provision/master/provision.sh", args: "update_os"
@@ -58,5 +58,5 @@ Vagrant.configure("2") do |config|
   end
 
   # THE SOFTWARE TO BE INSTALL COME HERE
-  config.vm.provision "shell", path: "https://raw.githubusercontent.com/joaquimserafim/vagrant-provision/master/provision.sh", args: "git htop"
+  config.vm.provision "shell", path: "https://raw.githubusercontent.com/joaquimserafim/vagrant-provision/master/provision.sh", args: "git htop silversearcher_ag"
 end
