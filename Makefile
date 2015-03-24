@@ -16,6 +16,6 @@ clean:
 
 run:
 	@echo "running vagrant $(cmd)..."
-	@cd test ; vagrant $(cmd)
+	@[ -d test ] && cd test ; vagrant $(cmd)
 
 .PHONY: name version test clean run
