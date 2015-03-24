@@ -14,4 +14,8 @@ clean:
 	@echo "clean test..."
 	@cd test ; vagrant destroy ; cd .. ; rm -rf test
 
-.PHONY: name version test clean
+run:
+	@echo "running vagrant $(cmd)..."
+	@cd test ; vagrant $(cmd)
+
+.PHONY: name version test clean run
