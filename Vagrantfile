@@ -24,8 +24,8 @@ $VAGRANTFILE_API_VERSION = "2"
 # we need some plugins
 #
 
-def checkPlugin(op, name)
-  if op == "up" && !Vagrant.has_plugin?(name)
+def checkPlugin(name)
+  if !Vagrant.has_plugin?(name)
     puts "'#{name}' plugin is required, installing it..."
     install = `vagrant plugin install #{name}`
   end
@@ -69,8 +69,10 @@ Vagrant.configure($VAGRANTFILE_API_VERSION) do |config|
     ]
   end
 
-  puts "verifying plugins..."
-  checkPlugin($*[0], "vagrant-reload")
+  if $*[0] == "up"
+    puts "==> verifying plugins..."
+    checkPlugin("vagrant-reload")
+  end
 
   # The shell to use when executing SSH commands from Vagrant
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"

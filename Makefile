@@ -5,7 +5,7 @@ name:
 	@echo "vagrantfile-template"
 
 version:
-	@echo "v2.0.0"
+	@echo "v2.0.1"
 
 test:
 	@echo "running tests..."
