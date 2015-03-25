@@ -1,23 +1,50 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-require './provision_reboot'
+########## the external vars that we can use from shell ##########
+# ENV['HOSTNAME']         : set the hostname
+# ENV['IP']               : set the IP address
+# ENV['SKIP_UPDATE']      : to skip the OS update
+# ENV['SCRIPTS']          : use local scripts for the provision
+# ENV['PROVISION']        : to choose the provision
+# ENV['PROVISION_SCRIPT'] : to choose the provision script
+##################################################################
 
-## globals
+#
+# globals
+#
+
 $provision = "https://raw.githubusercontent.com/joaquimserafim/" +
   "vagrant-provision/master/provision.sh"
 $box = "https://cloud-images.ubuntu.com/vagrant/trusty/current/" +
   "trusty-server-cloudimg-amd64-vagrant-disk1.box"
+$VAGRANTFILE_API_VERSION = "2"
 
-Vagrant.configure("2") do |config|
+#
+# we need some plugins
+#
+
+def checkPlugin(op, name)
+  if op == "up" && !Vagrant.has_plugin?(name)
+    puts "'#{name}' plugin is required, installing it..."
+    install = `vagrant plugin install #{name}`
+  end
+end
+
+#
+# Vagrant config
+#
+
+Vagrant.configure($VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "ubuntu-server-trusty"
   config.vm.box_url = $box
+  config.vm.hostname = ENV['HOSTNAME'] || "vm"
 
   #config.vm.network :forwarded_port, guest: 3000, host: 3000, auto_correct: true
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  config.vm.network :private_network, ip: "192.168.33.10"
+  config.vm.network :private_network, ip: (ENV['IP'] || "192.168.33.10")
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -42,31 +69,18 @@ Vagrant.configure("2") do |config|
     ]
   end
 
-  module OS
-    def OS.windows?
-      (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
-    end
-  end
+  puts "verifying plugins..."
+  checkPlugin($*[0], "vagrant-reload")
 
   # The shell to use when executing SSH commands from Vagrant
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
-  #############
-  # ENV['NOUPDATE'] : to skip the OS update
-  # ENV['SCRIPTS']  : to choose if wants to use local scripts for the provision
-  # ENV['PROVISION']: to choose the provision
-  #############
-
   # update the OS
-  if !ENV['NOUPDATE']
-    config.vm.provision "shell", path: $provision, args: "null update_os"
-    # need the 'provision_reboot' file for this
-    # now we need to reboot in the middle of the provision
-    if OS.windows?
-      config.vm.provision :windows_reboot
-    else
-      config.vm.provision :unix_reboot
-    end
+  if !ENV['SKIP_UPDATE']
+    config.vm.provision "shell",
+      path: ENV['PROVISION_SCRIPT'] || $provision,
+      args: "null update_os"
+    config.vm.provision :reload
   end
 
   # use local scripts for the provision
@@ -79,6 +93,6 @@ Vagrant.configure("2") do |config|
   ENV['PROVISION'] = "htop git " + (ENV['PROVISION'] || "")
 
   config.vm.provision "shell",
-    path: $provision,
+    path: ENV['PROVISION_SCRIPT'] || $provision,
     args: "#{ENV['SCRIPTS'] || false} #{ENV['PROVISION']}"
 end
