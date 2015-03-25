@@ -3,9 +3,15 @@
 
 require './provision_reboot'
 
+## globals
+$provision = "https://raw.githubusercontent.com/joaquimserafim/" +
+  "vagrant-provision/master/provision.sh"
+$box = "https://cloud-images.ubuntu.com/vagrant/trusty/current/" +
+  "trusty-server-cloudimg-amd64-vagrant-disk1.box"
+
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu-server-trusty"
-  config.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+  config.vm.box_url = $box
 
   #config.vm.network :forwarded_port, guest: 3000, host: 3000, auto_correct: true
 
@@ -45,18 +51,34 @@ Vagrant.configure("2") do |config|
   # The shell to use when executing SSH commands from Vagrant
   config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
-  # PROVISION
-  # update the OS
-  config.vm.provision "shell", path: "https://raw.githubusercontent.com/joaquimserafim/vagrant-provision/master/provision.sh", args: "update_os"
+  #############
+  # ENV['NOUPDATE'] : to skip the OS update
+  # ENV['SCRIPTS']  : to choose if wants to use local scripts for the provision
+  # ENV['PROVISION']: to choose the provision
+  #############
 
-  # need the 'provision_reboot' file for this
-  # now we need to reboot in the middle of the provision
-  if OS.windows?
-    config.vm.provision :windows_reboot
-  else
-    config.vm.provision :unix_reboot
+  # update the OS
+  if !ENV['NOUPDATE']
+    config.vm.provision "shell", path: $provision, args: "null update_os"
+    # need the 'provision_reboot' file for this
+    # now we need to reboot in the middle of the provision
+    if OS.windows?
+      config.vm.provision :windows_reboot
+    else
+      config.vm.provision :unix_reboot
+    end
   end
 
-  # THE SOFTWARE TO BE INSTALL COME HERE
-  config.vm.provision "shell", path: "https://raw.githubusercontent.com/joaquimserafim/vagrant-provision/master/provision.sh", args: "utils"
+  # use local scripts for the provision
+  if ENV['SCRIPTS']
+    config.vm.synced_folder ENV['SCRIPTS'], "/home/vagrant/.scripts"
+    ENV['SCRIPTS'] = "/home/vagrant/.scripts"
+  end
+
+  # PROVISION
+  ENV['PROVISION'] = "htop git " + (ENV['PROVISION'] || "")
+
+  config.vm.provision "shell",
+    path: $provision,
+    args: "#{ENV['SCRIPTS'] || false} #{ENV['PROVISION']}"
 end
