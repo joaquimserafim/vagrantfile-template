@@ -2,6 +2,8 @@
 # vi: set ft=ruby :
 
 ########## the external vars that we can use from shell ##########
+# ENV['BOX']              : the box to be used
+# ENV['BOX_NAME']         : the box name
 # ENV['HOSTNAME']         : set the hostname
 # ENV['IP']               : set the IP address
 # ENV['SKIP_UPDATE']      : to skip the OS update
