@@ -14,7 +14,7 @@
 # globals
 #
 
-$provision = "https://raw.githubusercontent.com/joaquimserafim/" +
+$provision = ENV['BOX'] || "https://raw.githubusercontent.com/joaquimserafim/" +
   "vagrant-provision/master/provision.sh"
 $box = "https://cloud-images.ubuntu.com/vagrant/trusty/current/" +
   "trusty-server-cloudimg-amd64-vagrant-disk1.box"
@@ -36,7 +36,7 @@ end
 #
 
 Vagrant.configure($VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "ubuntu-server-trusty"
+  config.vm.box = ENV['BOX_NAME'] || "ubuntu-server-trusty"
   config.vm.box_url = $box
   config.vm.hostname = ENV['HOSTNAME'] || "vm"
 
