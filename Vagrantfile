@@ -16,9 +16,9 @@
 # globals
 #
 
-$provision = ENV['BOX'] || "https://raw.githubusercontent.com/joaquimserafim/" +
+$provision = "https://raw.githubusercontent.com/joaquimserafim/" +
   "vagrant-provision/master/provision.sh"
-$box = "https://cloud-images.ubuntu.com/vagrant/trusty/current/" +
+$box = ENV['BOX'] || "https://cloud-images.ubuntu.com/vagrant/trusty/current/" +
   "trusty-server-cloudimg-amd64-vagrant-disk1.box"
 $VAGRANTFILE_API_VERSION = "2"
 
